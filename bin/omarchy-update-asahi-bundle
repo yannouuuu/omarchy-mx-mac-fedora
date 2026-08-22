@@ -7,9 +7,9 @@
 
 set -euo pipefail
 
-repo="${OMARCHY_ASAHI_BUNDLE_REPO:-maralcbr/omarchy-pkgs}"
+repo="${OMARCHY_ASAHI_BUNDLE_REPO:-yannouuuu/omarchy-pkgs-fedora}"
 state_file="${OMARCHY_ASAHI_BUNDLE_STATE:-/var/lib/omarchy/asahi-quattro-release}"
-trusted_key=5983B1CA32CB778F4D74D24ECFF35022CA5B5959
+trusted_key=054BDF38F9C8208EDAF66FCBD64CF9AD7ABB2D60
 trusted_key_file="${OMARCHY_ASAHI_KEY_FILE:-/usr/share/omarchy/default/omarchy-release.gpg}"
 mode=update
 yes=0

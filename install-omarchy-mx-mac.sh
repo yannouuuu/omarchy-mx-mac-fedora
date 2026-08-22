@@ -19,8 +19,8 @@ fi
 
 cd "$work_dir"
 
-release="https://github.com/maralcbr/omarchy-mx-mac/releases/latest/download"
-fingerprint="5983B1CA32CB778F4D74D24ECFF35022CA5B5959"
+release="https://github.com/yannouuuu/omarchy-mx-mac-fedora/releases/latest/download"
+fingerprint="054BDF38F9C8208EDAF66FCBD64CF9AD7ABB2D60"
 
 echo "=> Downloading installer and signatures..."
 curl -fLO --retry 3 "$release/install-omarchy-mx-mac"

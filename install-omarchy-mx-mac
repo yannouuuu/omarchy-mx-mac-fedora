@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-package_repo="${OMARCHY_PACKAGE_REPO:-maralcbr/omarchy-pkgs}"
+package_repo="${OMARCHY_PACKAGE_REPO:-yannouuuu/omarchy-pkgs-fedora}"
 release_base_url="${OMARCHY_PACKAGE_RELEASE_BASE_URL:-https://github.com/$package_repo/releases/download/asahi-quattro-channel}"
-fingerprint=5983B1CA32CB778F4D74D24ECFF35022CA5B5959
-key_url="${OMARCHY_RELEASE_KEY_URL:-https://raw.githubusercontent.com/maralcbr/omarchy-mx-mac/main/default/omarchy-release.gpg}"
+fingerprint=054BDF38F9C8208EDAF66FCBD64CF9AD7ABB2D60
+key_url="${OMARCHY_RELEASE_KEY_URL:-https://raw.githubusercontent.com/yannouuuu/omarchy-mx-mac-fedora/main/default/omarchy-release.gpg}"
 work_dir=$(mktemp -d "${TMPDIR:-/tmp}/omarchy-mx-mac-install.XXXXXXXX")
 trap 'rm -rf "$work_dir"' EXIT
 

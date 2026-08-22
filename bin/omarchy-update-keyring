@@ -4,8 +4,8 @@
 # omarchy:requires-sudo=true
 
 # Fingerprint of the Omarchy release signing key (same key as used for the bundle).
-# Source: https://raw.githubusercontent.com/maralcbr/omarchy-mx-mac/main/default/omarchy-release.gpg
-trusted_fingerprint=5983B1CA32CB778F4D74D24ECFF35022CA5B5959
+# Source: https://raw.githubusercontent.com/yannouuuu/omarchy-mx-mac-fedora/main/default/omarchy-release.gpg
+trusted_fingerprint=054BDF38F9C8208EDAF66FCBD64CF9AD7ABB2D60
 
 if omarchy-hw-apple-silicon; then
   # On Apple Silicon the Omarchy GPG key must be present in the RPM keyring.
