@@ -157,9 +157,17 @@ chown sddm:sddm /var/lib/sddm /var/lib/sddm/state.conf 2>/dev/null || true
 bash "$OMARCHY_PATH/install/login/sddm.sh" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
-# Enable SDDM as the display manager
+# Enable SDDM and Graphical Boot Target
 # ---------------------------------------------------------------------------
+echo "Setting up graphical boot target and SDDM..."
+systemctl set-default graphical.target 2>/dev/null || true
 systemctl enable sddm.service 2>/dev/null || true
+
+# Deploy SDDM theme and Wayland session entries
+mkdir -p /usr/share/sddm/themes /usr/share/wayland-sessions /etc/sddm.conf.d
+cp -rf "$OMARCHY_PATH/default/sddm/omarchy" /usr/share/sddm/themes/ 2>/dev/null || true
+cp -f "$OMARCHY_PATH/default/wayland-sessions/omarchy.desktop" /usr/share/wayland-sessions/ 2>/dev/null || true
+cp -rf "$OMARCHY_PATH/etc/sddm.conf.d/." /etc/sddm.conf.d/ 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # System configuration (Hyprland, hardware, etc.)
