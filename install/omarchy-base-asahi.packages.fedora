@@ -71,7 +71,7 @@ gvfs-smb
 # Packages available for aarch64 must be verified on real hardware.
 # ---------------------------------------------------------------------------
 hyprland
-# hyprland-guiutils  # TODO: confirm -- check lionheartp COPR
+hyprland-guiutils
 # hyprpicker        # TODO: confirm -- check lionheartp COPR
 hyprsunset
 # hypridle          # TODO: confirm -- check lionheartp COPR
@@ -118,7 +118,7 @@ power-profiles-daemon
 python3-gobject
 python3-poetry-core
 # python-terminaltexteffects  # TODO: confirm -- check PyPI/Fedora
-# quickshell        # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+quickshell
 qrencode
 zbar
 ripgrep
@@ -151,7 +151,7 @@ wl-clipboard
 wtype
 xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
-# xdg-terminal-exec  # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+xdg-terminal-exec
 xournalpp
 # yaru-icon-theme   # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
 # yay               # Arch AUR helper -- removed on Fedora, no equivalent
