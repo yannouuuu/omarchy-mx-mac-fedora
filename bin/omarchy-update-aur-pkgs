@@ -1,18 +1,8 @@
 #!/bin/bash
 
-# omarchy:summary=Update AUR packages if any are installed
+# omarchy:summary=No-op on Fedora Asahi — AUR packages are not available on RPM-based systems.
 
-if pacman -Qem >/dev/null; then
-  if omarchy-pkg-aur-accessible; then
-    echo -e "\e[32m\nUpdate AUR packages\e[0m"
-    ignored_packages=gcc14,gcc14-libs
-    if omarchy-hw-apple-silicon; then
-      ignored_packages+=,omarchy-dev,omarchy-keyring,omarchy-nvim,omarchy-settings-dev,quickshell-git,ttf-jetbrains-mono-nerd-basic
-    fi
-    yay -Sua --noconfirm --cleanafter --ignore "$ignored_packages"
-    echo
-  else
-    echo -e "\e[31m\nAUR is unavailable (so skipping updates)\e[0m"
-    echo
-  fi
-fi
+# AUR is Arch-specific. On Fedora Asahi, packages come from dnf/COPR only.
+# This command intentionally does nothing and exits successfully so that
+# omarchy-update does not break when running this step.
+exit 0

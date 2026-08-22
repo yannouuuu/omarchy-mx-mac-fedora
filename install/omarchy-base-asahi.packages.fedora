@@ -1,0 +1,159 @@
+# Omarchy core package list for Apple Silicon systems running Fedora Asahi Remix.
+# Derived from install/omarchy-base-asahi.packages with Fedora RPM equivalents.
+#
+# Conversion sources:
+#   - Confirmed equivalences: diff malik-na/omarchy-mac -> malik-na/omarchy-mac-fedora
+#     and Research.md from that repo.
+#   - COPR Hyprland: lionheartp/Hyprland (confirmed by user, replaces deprecated technochip/Hyprland-aarch64)
+#   - Fedora Asahi platform packages: provided by Fedora Asahi Remix -- DO NOT reinstall.
+#
+# Packages marked "# TODO: confirm" have no verified RPM equivalent yet.
+# Do not install them without checking on a real Fedora Asahi chroot first.
+
+# ---------------------------------------------------------------------------
+# Fedora Asahi platform -- provided by the Fedora Asahi Remix base install.
+# These are NOT in the package list; they must NOT be overridden or reinstalled.
+# (was: asahi-desktop-meta, asahi-fwextract, linux-asahi, linux-asahi-headers,
+#  mesa, mesa-demos, mesa-utils, fwupd, widevine)
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Core system
+# ---------------------------------------------------------------------------
+alsa-utils
+avahi
+bash-completion
+bluez
+# bluez-tools       # TODO: confirm -- not in default Fedora repos
+bluez-utils
+# bolt              # TODO: confirm -- thunderbolt, may be in Fedora
+brightnessctl
+btop
+chromium
+clang
+# cliamp            # TODO: confirm -- RPM in omarchy-pkgs-fedora (PKGBUILD/Arch only currently)
+cups
+cups-browsed
+cups-filters
+cups-pdf
+ddcutil
+moby-engine
+docker-compose
+dosfstools
+# dua-cli           # TODO: confirm -- check Fedora repos or COPR
+evince
+exfatprogs
+eza
+# fakeroot          # TODO: confirm -- available in Fedora
+fastfetch
+fcitx5
+fcitx5-gtk
+fcitx5-qt5
+fd-find
+ffmpegthumbnailer
+fontconfig
+foot
+fzf
+git
+gnome-calculator
+gnome-disk-utility
+gnome-keyring
+# gnome-themes-extra  # TODO: confirm name in Fedora
+grim
+# gum               # TODO: confirm -- check Fedora repos or COPR
+gvfs-mtp
+gvfs-nfs
+gvfs-smb
+
+# ---------------------------------------------------------------------------
+# Hyprland stack -- from COPR lionheartp/Hyprland
+# Enable with: dnf copr enable -y lionheartp/Hyprland
+# Packages available for aarch64 must be verified on real hardware.
+# ---------------------------------------------------------------------------
+hyprland
+# hyprland-guiutils  # TODO: confirm -- check lionheartp COPR
+# hyprpicker        # TODO: confirm -- check lionheartp COPR
+hyprsunset
+# hypridle          # TODO: confirm -- check lionheartp COPR
+# hyprlock          # TODO: confirm -- check lionheartp COPR
+
+ImageMagick
+imv
+inetutils
+inotify-tools
+inxi
+jq
+kdenlive
+# kernel-modules-hook  # TODO: confirm -- Arch-specific hook, no Fedora equivalent
+# lazydocker        # TODO: confirm -- check Fedora repos or COPR
+lazygit
+less
+libvips
+libsecret
+libyaml
+llvm
+# localsend         # TODO: confirm -- Flatpak or COPR
+lua5.1
+luarocks
+man-db
+# mariadb-libs      # In Fedora: community-mysql-libs or mariadb-connector-c
+mise
+mpv
+# mpv-mpris         # TODO: confirm -- check Fedora repos
+nautilus
+python3-nautilus
+NetworkManager
+google-noto-fonts-common
+google-noto-sans-cjk-fonts
+google-noto-emoji-fonts
+nss-mdns
+neovim
+# omarchy-nvim      # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+# pacman-contrib    # Arch-specific -- removed on Fedora
+pamixer
+plocate
+plymouth
+community-mysql-libs
+power-profiles-daemon
+python3-gobject
+python3-poetry-core
+# python-terminaltexteffects  # TODO: confirm -- check PyPI/Fedora
+# quickshell        # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+qrencode
+zbar
+ripgrep
+ruby
+sddm
+slurp
+socat
+starship
+# sushi             # TODO: confirm name -- gnome-sushi?
+system-config-printer
+tesseract
+tesseract-langpack-eng
+tealdeer
+tmux
+tree-sitter-cli
+# ttf-ia-writer     # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+# ttf-jetbrains-mono-nerd-basic  # TODO: confirm -- check lionheartp COPR
+udiskie
+# ufw               # firewalld is default on Fedora; ufw available in repos
+# ufw-docker        # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+unzip
+# usage             # TODO: confirm -- check Fedora repos
+uwsm
+whois
+wireless-regdb
+wireplumber
+wf-recorder
+wl-clipboard
+# woff2-font-awesome  # TODO: confirm -- check Fedora repos
+wtype
+xdg-desktop-portal-gtk
+xdg-desktop-portal-hyprland
+# xdg-terminal-exec  # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+xournalpp
+# yaru-icon-theme   # TODO: confirm -- needs RPM; omarchy-pkgs-fedora has PKGBUILD only
+# yay               # Arch AUR helper -- removed on Fedora, no equivalent
+yt-dlp
+zoxide

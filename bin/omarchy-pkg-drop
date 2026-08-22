@@ -10,7 +10,7 @@ declare -A selected=()
 
 while IFS= read -r package_name; do
   installed_exact[$package_name]=1
-done < <(pacman -Qq)
+done < <(rpm -qa --qf '%{NAME}\n')
 
 for pkg in "$@"; do
   if [[ -n ${installed_exact[$pkg]} && -z ${selected[$pkg]} ]]; then
@@ -20,5 +20,5 @@ for pkg in "$@"; do
 done
 
 if (( ${#installed[@]} > 0 )); then
-  sudo pacman -Rns --noconfirm "${installed[@]}"
+  sudo dnf remove -y "${installed[@]}"
 fi

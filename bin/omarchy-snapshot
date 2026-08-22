@@ -44,6 +44,16 @@ create)
   echo "Snapshots can be selected during boot."
   ;;
 restore)
-  sudo limine-snapper-restore
+  # On Fedora Asahi the bootloader is U-Boot + m1n1, not Limine.
+  # Automatic snapshot restore via limine-snapper-restore is not available.
+  # To roll back to a Btrfs snapshot on Fedora Asahi:
+  #   1. Boot into a recovery environment or a previous snapshot from the GRUB menu.
+  #   2. Use 'btrfs subvolume list' and 'btrfs subvolume set-default' to switch.
+  #   3. Reboot.
+  # NOTE: This has not been tested on Fedora Asahi hardware. Validate the
+  # exact recovery procedure for your system before relying on it.
+  echo "Error: Snapshot restore is not automated on Fedora Asahi (no Limine)." >&2
+  echo "To restore a snapshot, boot from GRUB and select a previous Btrfs snapshot." >&2
+  exit 1
   ;;
 esac

@@ -1,43 +1,27 @@
 #!/bin/bash
 
-# omarchy:summary=Update system packages with pacman
+# omarchy:summary=Update system packages with dnf
 # omarchy:requires-sudo=true
 
 set -e
 
-# The conflict handler's last resort: pacman puts its questions to the person
-# running the update instead of answering them itself. Nothing here may capture
-# a stream, because an upgrade without --noconfirm prompts on stderr. The
-# handler has already said why, so no heading here either.
-if [[ ${OMARCHY_UPDATE_CONFLICT:-} == 1 && ${OMARCHY_UPDATE_INTERACTIVE:-} == 1 ]]; then
-  exec sudo env OMARCHY_UPDATE_PACMAN=1 pacman -Syu --overwrite '/usr/share/omarchy/*'
-fi
-
 echo -e "\e[32m\nUpdate system packages\e[0m"
 
-errors=$(mktemp)
-trap 'rm -f "$errors"' EXIT
-
-pacman_args=()
+dnf_args=()
 if omarchy-hw-apple-silicon; then
-  pacman_args+=(--ignore omarchy-keyring,omarchy-settings-dev,omarchy-dev,omarchy-nvim,quickshell-git,ttf-jetbrains-mono-nerd-basic)
+  # On Apple Silicon the Quattro bundle packages are managed by the signed
+  # bundle updater, not by a plain dnf upgrade. Exclude them here so they
+  # don't get independently bumped by a COPR update.
+  dnf_args+=(--exclude omarchy-keyring --exclude omarchy-settings-dev \
+              --exclude omarchy-dev --exclude omarchy-nvim \
+              --exclude quickshell --exclude ttf-jetbrains-mono-nerd-basic)
 fi
 
-# /usr/share/omarchy is wholly Omarchy's; files can land there unowned and would
-# otherwise abort the upgrade. Packaged content wins there.
-# Progress bars stay on stdout. Errors are on stderr, kept for the conflict
-# handler below; LC_ALL=C is what keeps them parseable in any locale.
-if sudo env LC_ALL=C OMARCHY_UPDATE_PACMAN=1 pacman -Syu --noconfirm \
-  --overwrite '/usr/share/omarchy/*' "${pacman_args[@]}" 2>"$errors"; then
-  cat "$errors" >&2
+# DNF handles conflict resolution interactively via its own prompts.
+# Use -y for non-interactive mode; conflicts that require decisions will
+# surface as dnf errors for the user to resolve manually.
+if sudo env OMARCHY_UPDATE_DNF=1 dnf upgrade --refresh -y "${dnf_args[@]}"; then
   exit 0
 fi
-cat "$errors" >&2
 
-# The handler takes it from here: it clears files pacman doesn't own yet and
-# runs this again, and puts a package conflict to whoever started the update.
-# Anything else, including a second failure, is for a human.
-[[ ${OMARCHY_UPDATE_RETRY:-} != 1 ]] || exit 1
-# exec, so the EXIT trap above does not fire and the handler can still read the
-# report. It takes over deleting it.
-exec env OMARCHY_UPDATE_CONFLICT=1 omarchy-update-system-pkgs-when-conflicted "$errors"
+exit 1

@@ -1,12 +1,8 @@
-# Hardware-specific pacman repository extensions that must survive the final
-# pacman.conf restore.
-if lspci -nn | grep "106b:180[12]" >/dev/null; then
-  if ! grep -q '^\[arch-mact2\]' /etc/pacman.conf; then
-    cat >> /etc/pacman.conf <<'EOF'
-
-[arch-mact2]
-Server = https://github.com/NoaHimesaka1873/arch-mact2-mirror/releases/download/release
-SigLevel = Never
-EOF
-  fi
-fi
+# Hardware-specific package repository extensions for Apple Silicon on Fedora Asahi Remix.
+#
+# The arch-mact2 pacman repository (Intel MacBook T2 support) has no equivalent
+# on Fedora. Fedora Asahi Remix ships T2 support through its own kernel and
+# firmware packages. No action needed here.
+#
+# If T2-specific packages are required in the future, add a dnf copr enable
+# call here and document the COPR source.

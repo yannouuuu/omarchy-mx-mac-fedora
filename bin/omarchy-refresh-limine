@@ -1,19 +1,9 @@
 #!/bin/bash
 
-# omarchy:summary=Overwrite the user config for the Limine bootloader and rebuild it.
+# omarchy:summary=Not available on Fedora Asahi — Limine bootloader is not used on Apple Silicon.
 # omarchy:requires-sudo=true
 
-legacy_uki="/boot/EFI/Linux/$(cat /etc/machine-id)_linux.efi"
-
-if sudo test -f /boot/EFI/Linux/omarchy_linux.efi && sudo test -f "$legacy_uki"; then
-  echo "Cleanup extra UKI"
-  sudo rm -f "$legacy_uki"
-fi
-echo "Resetting limine config"
-
-sudo mv /boot/limine.conf /boot/limine.conf.bak
-
-sudo cp "$OMARCHY_PATH/default/limine/limine.conf" /boot/limine.conf
-
-sudo limine-update
-sudo limine-snapper-sync
+# Fedora Asahi Remix uses U-Boot + m1n1 as the bootloader, not Limine.
+# This command has no equivalent on Fedora Asahi and exits with an error.
+echo "Error: Limine is not used on Fedora Asahi (bootloader is U-Boot + m1n1)." >&2
+exit 1

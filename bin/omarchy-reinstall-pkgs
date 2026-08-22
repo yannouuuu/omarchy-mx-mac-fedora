@@ -1,18 +1,23 @@
 #!/bin/bash
 
-# omarchy:summary=Reinstall all default Omarchy packages from the stable channel
+# omarchy:summary=Reinstall all default Omarchy packages from dnf
 # omarchy:requires-sudo=true
 
 set -e
 
-# Reinstall all default Omarchy packages from the stable channel and downgrade any packages that are too new.
+# Refresh DNF repository metadata
+sudo dnf makecache --refresh
 
-# Set the package repository to the stable mirrors
-omarchy-refresh-pacman
+# Ensure all packages are installed from the Fedora manifest.
+# Falls back to the base Asahi manifest if the Fedora-specific one is missing.
+fedora_manifest="$OMARCHY_PATH/install/omarchy-base-asahi.packages.fedora"
+arch_manifest="$OMARCHY_PATH/install/omarchy-base-asahi.packages"
 
-# Downgrade any packages to the stable setup
-sudo env OMARCHY_UPDATE_PACMAN=1 pacman -Suu --noconfirm
+if [[ -f $fedora_manifest ]]; then
+  mapfile -t packages < <(grep -v '^#' "$fedora_manifest" | grep -v '^$')
+else
+  echo "Warning: Fedora package manifest not found, falling back to Arch manifest (names may not match)" >&2
+  mapfile -t packages < <(grep -v '^#' "$arch_manifest" | grep -v '^$')
+fi
 
-# Ensure all packages are installed
-mapfile -t packages < <(grep -v '^#' "$OMARCHY_PATH/install/omarchy-base.packages" | grep -v '^$')
-sudo env OMARCHY_UPDATE_PACMAN=1 pacman -Syu --noconfirm --needed "${packages[@]}"
+sudo dnf install -y --skip-unavailable "${packages[@]}"

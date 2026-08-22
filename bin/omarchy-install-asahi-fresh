@@ -4,8 +4,18 @@
 # omarchy:args=--asahi-packages DIR [--user USER]
 # omarchy:hidden=true
 # omarchy:requires-sudo=true
+# NOTE: This script is Arch Linux / pacman specific. It is not used on
+# Fedora Asahi Remix. The Fedora fresh installer is install-asahi-quattro
+# from the omarchy-pkgs-fedora repository.
 
 set -euo pipefail
+
+# Fail early if pacman is not available (running on Fedora or another distro).
+if ! command -v pacman >/dev/null 2>&1; then
+  echo "Error: omarchy-install-asahi-fresh requires pacman (Arch Linux only)." >&2
+  echo "For Fedora Asahi Remix, use install-asahi-quattro from omarchy-pkgs-fedora." >&2
+  exit 1
+fi
 
 bundle_dir=""
 target_user=""

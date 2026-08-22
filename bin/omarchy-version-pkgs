@@ -2,4 +2,18 @@
 
 # omarchy:summary=Print when system packages were last upgraded
 
-date -d "$(grep upgraded /var/log/pacman.log | tail -1 | sed -E 's/\[([^]]+)\].*/\1/')" "+%A, %B %d %Y at %H:%M"
+# On Fedora Asahi, upgrade history is in /var/log/dnf.log (or dnf5.log on Fedora 41+).
+dnf_log=/var/log/dnf5.log
+[[ -f $dnf_log ]] || dnf_log=/var/log/dnf.log
+
+if [[ ! -f $dnf_log ]]; then
+  echo "No DNF upgrade log found" >&2
+  exit 1
+fi
+
+last_upgrade=$(grep -E 'Upgrade|upgrade' "$dnf_log" | tail -1 | awk '{print $1, $2}')
+if [[ -z $last_upgrade ]]; then
+  echo "No upgrades recorded in DNF log"
+  exit 0
+fi
+date -d "$last_upgrade" "+%A, %B %d %Y at %H:%M" 2>/dev/null || echo "$last_upgrade"

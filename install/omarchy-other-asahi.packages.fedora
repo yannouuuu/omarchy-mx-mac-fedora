@@ -1,0 +1,57 @@
+# Packages installed outside the core package set on Apple Silicon/Asahi (Fedora).
+# Fedora Asahi Remix equivalent of omarchy-other-asahi.packages.
+#
+# This list intentionally excludes x86, Limine, multilib, and PC hardware stacks.
+# It also excludes yay, paru, AUR helpers, and Arch-specific build tools.
+#
+# Conversion sources:
+#   - diff malik-na/omarchy-mac -> malik-na/omarchy-mac-fedora (Research.md)
+#   - Fedora Asahi Remix documentation
+
+# Development tools group (was: base-devel)
+@development-tools
+
+# Build-time dependencies
+autoconf-archive
+
+# Filesystem support
+btrfs-progs
+
+# DKMS framework (for kernel modules)
+dkms
+
+# GStreamer PipeWire integration
+gstreamer1-plugin-pipewire
+
+# GTK4 layer shell (required by some Wayland/Hyprland tools)
+# gtk4-layer-shell  # TODO: confirm -- check Fedora repos or COPR
+
+# PulseAudio compatibility library
+libpulse
+
+# Kernel firmware
+linux-firmware
+
+# PipeWire
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulseaudio
+
+# Qt6 Wayland support
+qt6-qtwayland
+
+# Vulkan driver for Apple Silicon (provided by Fedora Asahi Remix Mesa)
+# vulkan-asahi is bundled in the Asahi Mesa package -- do not install separately
+
+# WebP image support for various apps
+webp-pixbuf-loader
+
+# ZRAM swap generator
+zram-generator
+
+# Speaker tunings (LV2 limiter used by every tuning profile)
+lsp-plugins-lv2
+
+# Firewall (replaces ufw on Fedora -- firewalld is the default)
+firewalld

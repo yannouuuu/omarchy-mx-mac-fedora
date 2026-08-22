@@ -1,35 +1,24 @@
 #!/bin/bash
 
-# omarchy:summary=Ensure the Omarchy and Arch keyring packages are installed and populated
+# omarchy:summary=Ensure the Omarchy GPG key is imported in the RPM keyring and refresh repo metadata
 # omarchy:requires-sudo=true
 
-trusted_key=40DFB630FF42BCFFB047046CF0134EE680CAC571
+# Fingerprint of the Omarchy release signing key (same key as used for the bundle).
+# Source: https://raw.githubusercontent.com/maralcbr/omarchy-mx-mac/main/default/omarchy-release.gpg
+trusted_fingerprint=5983B1CA32CB778F4D74D24ECFF35022CA5B5959
 
 if omarchy-hw-apple-silicon; then
-  installed_fingerprint=$(GNUPGHOME=/etc/pacman.d/gnupg gpg --batch --with-colons --fingerprint "$trusted_key" 2>/dev/null |
-    awk -F: '$1 == "fpr" { print $10; exit }')
-  if omarchy-pkg-missing omarchy-keyring || [[ $installed_fingerprint != "$trusted_key" ]]; then
-    echo "The trusted Omarchy keyring must be installed by the signed Apple Silicon bundle." >&2
+  # On Apple Silicon the Omarchy GPG key must be present in the RPM keyring.
+  # It is imported during the fresh install. If it is missing, the bundle
+  # updater cannot verify signed packages.
+  if ! rpm -q gpg-pubkey 2>/dev/null | grep -qi "${trusted_fingerprint:(-8,,)}"; then
+    echo "The trusted Omarchy RPM signing key must be imported. Run:" >&2
+    echo "  sudo rpm --import \$OMARCHY_PATH/default/omarchy-release.gpg" >&2
     exit 1
   fi
-elif omarchy-pkg-missing omarchy-keyring || ! sudo pacman-key --list-keys "$trusted_key" &>/dev/null; then
-  sudo pacman-key --recv-keys "$trusted_key" --keyserver keys.openpgp.org
-  sudo pacman-key --lsign-key "$trusted_key"
-
-  # This is generally not a good idea, but this is a special case because we're going to be updating
-  # the full set of packages in omarchy-update-system-pkgs right after this (and it needs latest keyring)!
-  sudo pacman -Sy
-  omarchy-pkg-add omarchy-keyring
-
-  sudo pacman-key --list-keys "$trusted_key"
 fi
 
-# Ensure we have the platform keyring, which can change without a package
-# version bump. Arch Linux ARM uses its own signing keys on Apple Silicon.
-platform_keyring=archlinux-keyring
-if omarchy-hw-apple-silicon; then
-  platform_keyring=archlinuxarm-keyring
-fi
-echo -e "\e[32m\nUpdate Arch signing keys\e[0m"
-sudo pacman -Sy --noconfirm "$platform_keyring" >/dev/null 2> >(grep -vE "^warning: ${platform_keyring}-[^ ]+ is up to date -- reinstalling$" >&2)
-echo "Keys are correct"
+# Refresh DNF repository metadata so subsequent installs use current data.
+echo -e "\e[32m\nRefresh DNF repository metadata\e[0m"
+sudo dnf makecache --refresh >/dev/null 2>&1 || true
+echo "Repository metadata refreshed"
