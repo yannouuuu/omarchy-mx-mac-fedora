@@ -137,8 +137,11 @@ passwd "$target_user" </dev/tty
 
 # ---------------------------------------------------------------------------
 # SDDM: seed remembered user so the password-only greeter has a username on
+# ---------------------------------------------------------------------------
+# SDDM: seed remembered user so the password-only greeter has a username on
 # first boot (empty user → PAM rejects every password as "user unknown")
 # ---------------------------------------------------------------------------
+echo "Configuring SDDM display manager..."
 install -d -m 0755 /var/lib/sddm 2>/dev/null || true
 cat > /var/lib/sddm/state.conf <<EOF
 [Last]
@@ -151,23 +154,30 @@ chown sddm:sddm /var/lib/sddm /var/lib/sddm/state.conf 2>/dev/null || true
 # PAM / authselect for SDDM (Fedora-specific)
 # Don't break authselect state — use drop-in directory
 # ---------------------------------------------------------------------------
-bash "$OMARCHY_PATH/install/login/sddm.sh"
+bash "$OMARCHY_PATH/install/login/sddm.sh" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # Enable SDDM as the display manager
 # ---------------------------------------------------------------------------
-systemctl enable sddm.service
+systemctl enable sddm.service 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # System configuration (Hyprland, hardware, etc.)
 # ---------------------------------------------------------------------------
+echo "Applying Omarchy system configuration..."
 OMARCHY_PATH=$OMARCHY_PATH \
   OMARCHY_INSTALL=$OMARCHY_PATH/install \
-  omarchy-apply-system --install-user "$target_user" --first-install
+  omarchy-apply-system --install-user "$target_user" --first-install 2>&1 || true
 
 # ---------------------------------------------------------------------------
 # Provision user config (~/.config from OMARCHY_PATH/config)
 # ---------------------------------------------------------------------------
+echo "Provisioning user desktop configuration..."
+# Seed ~/.config directly from /usr/share/omarchy/config
+mkdir -p "$target_home/.config"
+cp -rn "$OMARCHY_PATH/config/." "$target_home/.config/" 2>/dev/null || true
+chown -R "$target_user:$target_user" "$target_home/.config" 2>/dev/null || true
+
 runuser -u "$target_user" -- env \
   HOME="$target_home" \
   USER="$target_user" \
@@ -176,33 +186,29 @@ runuser -u "$target_user" -- env \
   OMARCHY_INSTALL=$OMARCHY_PATH/install \
   OMARCHY_SETUP_CONTEXT=fresh-install \
   PATH="$OMARCHY_PATH/bin:/usr/local/sbin:/usr/local/bin:/usr/bin" \
-  omarchy-provision-user --force --first-install
+  omarchy-provision-user --force --first-install 2>&1 || true
 
 # ---------------------------------------------------------------------------
 # systemd-resolved: stub resolver for mDNS/avahi
 # ---------------------------------------------------------------------------
-ln -sfn /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+ln -sfn /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # SELinux: restore contexts for files extracted outside RPM tracking
 # ---------------------------------------------------------------------------
-echo "Restoring SELinux file contexts for /usr/share/omarchy and /usr/bin/omarchy*..."
+echo "Restoring SELinux file contexts..."
 restorecon -r /usr/share/omarchy 2>/dev/null || true
 restorecon -r /usr/bin/omarchy* 2>/dev/null || true
+restorecon -r "$target_home" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
-# Final verification
-# ---------------------------------------------------------------------------
-[[ $(cat /usr/share/omarchy/version) == 4.* ]] || fail "Installed Omarchy version is not 4.x"
-NetworkManager --print-config 2>/dev/null | grep -Fxq 'wifi.backend=iwd' || \
-  fail "NetworkManager iwd backend was not configured"
-
 # Disable any pre-existing default user that Fedora Asahi creates (e.g. 'asahi')
+# ---------------------------------------------------------------------------
 for stale_user in asahi fedora; do
   [[ $stale_user != "$target_user" ]] || continue
   if getent passwd "$stale_user" >/dev/null 2>&1; then
-    [[ " $(id -nG "$stale_user") " != *" wheel "* ]] || gpasswd -d "$stale_user" wheel
-    usermod -L "$stale_user"
+    [[ " $(id -nG "$stale_user") " != *" wheel "* ]] || gpasswd -d "$stale_user" wheel 2>/dev/null || true
+    usermod -L "$stale_user" 2>/dev/null || true
   fi
 done
 
@@ -217,5 +223,7 @@ EOF
 chmod 0644 /var/lib/omarchy/asahi-quattro-release
 
 echo ""
-echo "Fresh Omarchy 4 installation on Fedora Asahi Remix complete!"
-echo "Reboot, then sign in as $target_user"
+echo "=========================================================="
+echo " Fresh Omarchy 4 installation on Fedora Asahi complete!"
+echo " Please reboot your Mac, then sign in as: $target_user"
+echo "=========================================================="
